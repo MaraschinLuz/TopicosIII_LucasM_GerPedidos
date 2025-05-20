@@ -1,0 +1,41 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core">
+    <h:head>
+        <title>Facelet Title</title>
+    </h:head>
+    <h:body>
+        <h:form id="frmList">
+            <h:panelGroup id="pngList">
+                <p:fieldset toggleable="true">
+                    <p:dataTable id="datalist" value="#{clienteController.clienteList}" var="item"
+                                 selectionMode="single" selection="#{clienteController.selected}"
+                                 widgetVar="datalistPessoaWidgetVar"
+                                 rowKey="#{item.id}"
+                                 paginator="true"
+                                 rows="3"
+                                 rowsPerPageTemplate="5,10,50,100"
+                                 emptyMessage="Nenhum cliente cadastrado..."
+                                 >
+
+                        <p:ajax event="rowSelect"   update="btnEdit btnDelete btnView"/>
+                        <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView"/>
+
+                        <p:column width="4%" sortBy="#{item.id}" filterBy="#{item.id}">
+                            <f:facet name="header">
+                                <h:outputText value="ID"/>
+                            </f:facet>
+                            <h:outputText value="#{item.id}"
+                    </p:column>
+
+                    <p:column
+
+            </p:dataTable>
+        </p:fieldset>
+    </h:panelGroup>
+</h:form>
+</h:body>
+</html>
