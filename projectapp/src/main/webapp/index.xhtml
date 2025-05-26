@@ -21,15 +21,13 @@
                                  emptyMessage="Nenhum cliente cadastrado..."
                                  >
 
-                        <p:ajax event="rowSelect"   update="btnEdit btnDelete btnView"/>
-                        <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView"/>
 
                         <p:column width="4%" sortBy="#{item.id}" filterBy="#{item.id}">
                             <f:facet name="header">
                                 <h:outputText value="ID"/>
                             </f:facet>
-                            <h:outputText value="#{item.id}"
-                    </p:column>
+                            <h:outputText value="#{item.id}"/>
+                        </p:column>
 
                         <p:column width="10%" sortBy="#{item.nome}" filterBy="#{item.nome}">
                             <f:facet name="header">
@@ -37,10 +35,42 @@
                             </f:facet>
                             <h:outputText value="#{item.nome}"/>
                         </p:column>
-                        
-            </p:dataTable>
-        </p:fieldset>
-    </h:panelGroup>
-</h:form>
-</h:body>
+
+                        <p:column width="6%" sortBy="#{item.telefone}" filterBy="#{item.telefone}">
+                            <f:facet name="header">
+                                <h:outputText value="Telefone"/>
+                            </f:facet>
+                            <h:outputText value="#{item.telefone}"/>
+                        </p:column>
+
+                        <p:column width="8%" sortBy="#{item.endereco}" filterBy="#{item.endereco}">
+                            <f:facet name="header">
+                                <h:outputText value="Endereço"/>
+                            </f:facet>
+                            <h:outputText value="#{item.endereco}"/>
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <p:commandButton id="btnCreate" value="Incluir Cliente" icon="pi pi-file"
+                                             onclick="PF('dlgCreate').show()"/>
+                        </f:facet>
+                    </p:dataTable>
+                </p:fieldset>
+            </h:panelGroup>
+        </h:form>
+
+        <p:dialog header="Novo Cliente" widgetVar="dlgCreate" height="400" width="600" showEffect="fade" modal="true">
+            <h:form id="CreateForm">
+                <p:growl id="growl" showDetail="true"/>
+                <h:panelGrid id="pngCadastro" columns="2">
+                    <p:outputLabel id="oplNome" value="Nome:" for="iptNome"/>
+                    <p:inputText id="iptNome" size="40" label="Nome"  required="true"
+                                 requiredMessage="O atributo nome é obrigatório"
+                                 value="#{clienteController.cliente.nome}" maxlength="50"/>
+                </h:panelGrid>
+                <p:commandButton id="btnCadastrar" value="Cadastrar" update="@form, frmList"
+                                 action="#{clienteController.adicionarCliente()}" onclick="dlgCreate.hide()"/>
+            </h:form>                  
+        </p:dialog>
+    </h:body>
 </html>

@@ -7,6 +7,8 @@ package br.upf.projectapp.controller;
 import br.upf.projectapp.entity.ClienteEntity;
 import jakarta.inject.Named;
 import jakarta.enterprise.context.SessionScoped;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -25,11 +27,33 @@ public class ClienteController implements Serializable {
     public ClienteController() {
     }
     
+    private int gerarId(){
+        int id = 1;
+        if (!clienteList.isEmpty()) {
+            id = clienteList.size() + 1;
+        }
+        return id;
+    }
     
+    private void exibirMensagem(){
+        String msg = "Cliente adicionado: " + cliente.getNome();
+        FacesMessage fm = new FacesMessage(msg);
+        FacesContext.getCurrentInstance().addMessage(msg, fm);
+    }
+    
+    public void adicionarCliente(){
+        cliente.setId(gerarId());
+        clienteList.add(cliente);
+        exibirMensagem();
+        cliente = new ClienteEntity();
+    }
     private ClienteEntity cliente = new ClienteEntity();
     
     private List<ClienteEntity> clienteList = new ArrayList<>();
 
+    
+    private ClienteEntity selected;
+    
     public ClienteEntity getCliente() {
         return cliente;
     }
@@ -44,6 +68,14 @@ public class ClienteController implements Serializable {
 
     public void setClienteList(List<ClienteEntity> clienteList) {
         this.clienteList = clienteList;
+    }
+
+    public ClienteEntity getSelected() {
+        return selected;
+    }
+
+    public void setSelected(ClienteEntity selected) {
+        this.selected = selected;
     }
     
 }
