@@ -78,4 +78,27 @@ public class ClienteController implements Serializable {
         this.selected = selected;
     }
     
+    public void editarCliente(){
+        int index = clienteList.indexOf(selected);
+        clienteList.set(index, selected);
+        selected = null;
+        FacesMessage fm = new FacesMessage(
+        FacesMessage.SEVERITY_INFO,
+                "Sucesso!",
+                "Registro alterado com sucesso.");
+        FacesContext.getCurrentInstance().addMessage(null, fm);
+                
+    }
+    
+    public void deletarCliente(){
+        int index = clienteList.indexOf(selected);
+        clienteList.remove(index);
+        selected = null;
+        FacesMessage fm = new FacesMessage(
+                       FacesMessage.SEVERITY_INFO,
+                       "Sucesso!",
+                       "Registro excluido com sucesso");
+        FacesContext.getCurrentInstance().addMessage(null, fm);
+    }
+    
 }
