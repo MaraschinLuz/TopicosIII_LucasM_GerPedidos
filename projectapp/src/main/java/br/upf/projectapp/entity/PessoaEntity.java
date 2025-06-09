@@ -5,10 +5,16 @@
  */
 package br.upf.projectapp.entity;
 
+import jakarta.annotation.Nonnull;
+import jakarta.persistence.Basic;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import java.io.Serializable;
 
 /**
@@ -21,10 +27,26 @@ import java.io.Serializable;
 public class PessoaEntity implements Serializable{
     
     @Id
-    @GeneratedValue(strategy = )
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    @Column(name = "id")
     private int id;
+    
+    @Basic(optional = false)
+    @Nonnull
+    @Size(min = 1, max = 500)
+    @Column(name = "nome")
     private String nome;
+    
+    @Basic(optional = false)
+    @Nonnull
+    @Size(min = 1, max = 250)
+    @Column(name = "email")
     private String email;
+    
+    @Basic(optional = false)
+    @NotNull
+    @Column(name = "senha")
     private String senha;
 
     public int getId() {
@@ -57,6 +79,28 @@ public class PessoaEntity implements Serializable{
 
     public void setSenha(String senha) {
         this.senha = senha;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + this.id;
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PessoaEntity other = (PessoaEntity) obj;
+        return this.id == other.id;
     }
 
 

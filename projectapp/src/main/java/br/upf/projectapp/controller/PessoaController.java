@@ -5,7 +5,7 @@
 package br.upf.projectapp.controller;
 
 import br.upf.projectapp.entity.PessoaEntity;
-import br.upf.projectapp.entity.PessoaEntity;
+import jakarta.ejb.EJB;
 import jakarta.inject.Named;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.faces.application.FacesMessage;
@@ -25,8 +25,8 @@ public class PessoaController implements Serializable {
     /**
      * Creates a new instance of PessoaController
      */
-    public PessoaController() {
-    }
+    @EJB
+    private br.upf.projectapp.facade.PessoaFacade ejbFacade;
     
     private int gerarId(){
         int id = 1;
@@ -64,7 +64,7 @@ public class PessoaController implements Serializable {
     }
 
     public List<PessoaEntity> getPessoaList() {
-        return pessoaList;
+        return ejbFacade.buscarTodos();
     }
 
     public void setPessoaList(List<PessoaEntity> pessoaList) {
