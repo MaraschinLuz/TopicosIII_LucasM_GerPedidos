@@ -47,7 +47,7 @@ public class LoginController implements Serializable {
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
         
         PessoaEntity pessoaDB = ejbFacade.buscarPorEmail(pessoa.getEmail(), pessoa.getSenha());
-        if ((pessoaDB != null && pessoaDB.getId() != null)) {
+        if ((pessoaDB != null)) {
             
             session.setAttribute("pessoaLogada", pessoaDB);
             //caso as credenciais foram válidas, então direciona para página index
