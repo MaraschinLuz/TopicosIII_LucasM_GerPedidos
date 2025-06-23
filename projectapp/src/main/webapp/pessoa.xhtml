@@ -6,153 +6,150 @@
                 template="/WEB-INF/template.xhtml">
 
     <ui:define name="title">
-        <h:outputText value="Cadastro de Pessoa" />
+        <h:outputText value="Pessoa" />
     </ui:define>
 
     <ui:define name="content">
         <h:form id="frmList">
             <h:panelGroup id="pngList">
-                <p:fieldset toggleable="true">
+                <p:fieldset legend="Lista de Pessoas" toggleable="true" toggleSpeed="300">
                     <p:dataTable id="datalist" value="#{pessoaController.pessoaList}" var="item"
                                  selectionMode="single" selection="#{pessoaController.selected}"
                                  widgetVar="datalistPessoaWidgetVar"
                                  rowKey="#{item.id}"
                                  paginator="true"
-                                 rows="3"
-                                 rowsPerPageTemplate="5,10,50,100"
-                                 emptyMessage="Nenhum pessoa cadastrado...">
+                                 rows="5"
+                                 rowsPerPageTemplate="5,10,20,50"
+                                 emptyMessage="Nenhuma pessoa cadastrada..."
+                                 styleClass="ui-datatable-hoverable-rows">
 
-                        <p:ajax event="rowSelect" update="btnEdit btnDelete btnView"/>
-                        <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView"/>
+                        <p:ajax event="rowSelect" update="btnToolbar" />
+                        <p:ajax event="rowUnselect" update="btnToolbar" />
 
-                        <p:column width="4%" sortBy="#{item.id}" filterBy="#{item.id}">
-                            <f:facet name="header">
-                                <h:outputText value="ID"/>
-                            </f:facet>
-                            <h:outputText value="#{item.id}"/>
+                        <p:column headerText="ID" width="6%" sortBy="#{item.id}" filterBy="#{item.id}">
+                            <h:outputText value="#{item.id}" />
                         </p:column>
 
-                        <p:column width="10%" sortBy="#{item.nome}" filterBy="#{item.nome}">
-                            <f:facet name="header">
-                                <h:outputText value="Nome"/>
-                            </f:facet>
-                            <h:outputText value="#{item.nome}"/>
+                        <p:column headerText="Nome" sortBy="#{item.nome}" filterBy="#{item.nome}">
+                            <h:outputText value="#{item.nome}" />
                         </p:column>
 
-                        <p:column width="8%" sortBy="#{item.email}" filterBy="#{item.email}">
-                            <f:facet name="header">
-                                <h:outputText value="Email"/>
-                            </f:facet>
-                            <h:outputText value="#{item.email}"/>
+                        <p:column headerText="Email" sortBy="#{item.email}" filterBy="#{item.email}">
+                            <h:outputText value="#{item.email}" />
                         </p:column>
 
                         <f:facet name="footer">
-                            <p:commandButton id="btnCreate" value="Incluir Pessoa" icon="pi pi-file"
-                                             onclick="PF('dlgCreate').show()"/>
-
-                            <p:commandButton id="btnEdit" icon="pi pi-user-edit" value="Editar Pessoa"
-                                             update="formEdit" oncomplete="PF('dlgEdit').show()"
-                                             disabled="#{empty pessoaController.selected}"/>
-
-                            <p:commandButton id="btnDelete" icon="pi pi-trash" value="Excluir Pessoa"
-                                             actionListener="#{pessoaController.deletarPessoa()}" update="frmList"
-                                             disabled="#{empty pessoaController.selected}">
-                                <p:confirm header="Confirmar Exclusão" message="Você confirma a exclusão do registro?"
-                                           icon="ui-icon-alert"/>
-                            </p:commandButton>
-
-                            <p:commandButton id="btnView" icon="pi pi-user-edit" value="Detalhes do Pessoa"
-                                             update="formView" oncomplete="PF('dlgView').show()"
-                                             disabled="#{empty pessoaController.selected}"/>
+                            <p:toolbar id="btnToolbar">
+                                <p:toolbarGroup>
+                                    <p:commandButton id="btnCreate" value="Nova Pessoa" icon="pi pi-plus"
+                                                     styleClass="ui-button-success" onclick="PF('dlgCreate').show()" />
+                                    <p:commandButton id="btnEdit" value="Editar" icon="pi pi-pencil"
+                                                     update="formEdit" oncomplete="PF('dlgEdit').show()"
+                                                     disabled="#{empty pessoaController.selected}" />
+                                    <p:commandButton id="btnDelete" value="Excluir" icon="pi pi-trash"
+                                                     actionListener="#{pessoaController.deletarPessoa()}"
+                                                     update="frmList" disabled="#{empty pessoaController.selected}">
+                                        <p:confirm header="Confirmar Exclusão"
+                                                   message="Confirma a exclusão da pessoa?"
+                                                   icon="pi pi-exclamation-triangle" />
+                                    </p:commandButton>
+                                    <p:commandButton id="btnView" value="Detalhes" icon="pi pi-eye"
+                                                     update="formView" oncomplete="PF('dlgView').show()"
+                                                     disabled="#{empty pessoaController.selected}" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
                         </f:facet>
                     </p:dataTable>
                 </p:fieldset>
-                <p:confirmDialog global="true" showEffect="true" hideEffect="fade">
-                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check"/>
-                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-times"/>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check" />
+                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times" />
                 </p:confirmDialog>
             </h:panelGroup>
         </h:form>
 
-        <!-- Diálogo para criar nova pessoa -->
-        <p:dialog header="Nova Pessoa" widgetVar="dlgCreate" height="400" width="600" showEffect="fade" modal="true">
+        <!-- Diálogo: Nova Pessoa -->
+        <p:dialog header="Nova Pessoa" widgetVar="dlgCreate" modal="true" width="550" showEffect="fade">
             <h:form id="CreateForm">
-                <p:growl id="growl" showDetail="true"/>
-                <h:panelGrid id="pngCadastro" columns="2">
+                <p:growl showDetail="true" />
+                <h:panelGrid columns="2" columnClasses="label,value" styleClass="ui-fluid" >
+                    <p:outputLabel for="iptNomeCreate" value="Nome:" />
+                    <p:inputText id="iptNomeCreate" value="#{pessoaController.pessoa.nome}"
+                                 required="true" maxlength="50"
+                                 requiredMessage="O nome é obrigatório" />
 
-                    <p:outputLabel id="oplNome" value="Nome:" for="iptNome"/>
-                    <p:inputText id="iptNome" size="40" label="Nome" required="true"
-                                 requiredMessage="O atributo nome é obrigatório"
-                                 value="#{pessoaController.pessoa.nome}" maxlength="50"/>
-
-                    <p:outputLabel id="oplEmail" for="impEmail" value="Email:"/>
-                    <p:inputText id="impEmail" size="40" label="Email" required="true"
-                                 requiredMessage="O atributo email é obrigatório"
-                                 validatorMessage="Campo email é inválido"
-                                 value="#{pessoaController.pessoa.email}" maxlength="250"
-                                 type="email">
+                    <p:outputLabel for="iptEmailCreate" value="Email:" />
+                    <p:inputText id="iptEmailCreate" type="email"
+                                 value="#{pessoaController.pessoa.email}"
+                                 required="true" maxlength="250"
+                                 requiredMessage="O email é obrigatório"
+                                 validatorMessage="Email inválido">
                         <f:validateRegex pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" />
                     </p:inputText>
 
-                    <p:outputLabel id="oplSenha" for="impSenha" value="Senha:"/>
-                    <p:inputText id="impSenha" size="40" label="Senha" required="true"
-                                 requiredMessage="O atributo senha é obrigatório"
-                                 value="#{pessoaController.pessoa.senha}"/>
-
+                    <p:outputLabel for="iptSenhaCreate" value="Senha:" />
+                    <p:password id="iptSenhaCreate" value="#{pessoaController.pessoa.senha}"
+                                required="true" feedback="true"
+                                requiredMessage="A senha é obrigatória" />
                 </h:panelGrid>
-
-                <p:commandButton id="btnCadastrar" value="Cadastrar" update="@form, frmList"
-                                 action="#{pessoaController.adicionarPessoa()}" onclick="PF('dlgCreate').hide()"/>
-            </h:form>                  
-        </p:dialog>
-
-        <!-- Diálogo para editar pessoa -->
-        <p:dialog header="Editar Pessoa" widgetVar="dlgEdit" height="400" width="600" showEffect="fade" modal="true">
-            <h:form id="formEdit">
-                <p:growl id="growl" showDetail="true"/>
-                <h:panelGrid id="pngEdicao" columns="2">
-                    <p:outputLabel id="oplId" value="ID:" for="iptId"/>
-                    <p:inputText id="iptId" size="10" label="ID" disabled="true"
-                                 value="#{pessoaController.selected.id}"/>
-
-                    <p:outputLabel id="oplNome" value="Nome:" for="iptNome"/>
-                    <p:inputText id="iptNome" size="40" label="Nome" required="true"
-                                 requiredMessage="O atributo nome é obrigatório"
-                                 value="#{pessoaController.selected.nome}" maxlength="50"/>
-
-                    <p:outputLabel id="oplEmail" for="impEmailEdit" value="Email:"/>
-                    <p:inputText id="impEmailEdit" size="40" label="Email" required="true"
-                                 requiredMessage="O atributo email é obrigatório"
-                                 validatorMessage="Campo email é inválido"
-                                 value="#{pessoaController.selected.email}" maxlength="250"
-                                 type="email">
-                        <f:validateRegex pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" />
-                    </p:inputText>
-
-                    <p:outputLabel id="oplSenha" for="impSenha" value="Senha: "/>
-                    <p:inputText id="impSenha" size="40" label="Senha" required="true"
-                                 requiredMessage="O atributo senha é obrigatório"
-                                 value="#{pessoaController.selected.senha}"/>
-                </h:panelGrid>
-                <p:commandButton id="btnSalvarEdicao" value="Salvar" update="@form, frmList"
-                                 onclick="dlgEdit.hide()" icon="pi pi-save"
-                                 action="#{pessoaController.editarPessoa()}"/>
+                <p:separator />
+                <p:commandButton value="Cadastrar" icon="pi pi-check"
+                                 action="#{pessoaController.adicionarPessoa()}"
+                                 update="@form, frmList"
+                                 styleClass="ui-button-primary"
+                                 oncomplete="PF('dlgCreate').hide()" />
             </h:form>
         </p:dialog>
 
-        <!-- Diálogo para visualizar detalhes da pessoa -->
-        <p:dialog header="Visualizar Detalhes do Pessoa" widgetVar="dlgView" height="250"
-                  width="500" showEffect="fade" modal="true">
+        <!-- Diálogo: Editar Pessoa -->
+        <p:dialog header="Editar Pessoa" widgetVar="dlgEdit" modal="true" width="550" showEffect="fade">
+            <h:form id="formEdit">
+                <p:growl showDetail="true" />
+                <h:panelGrid columns="2" columnClasses="label,value" styleClass="ui-fluid" >
+                    <p:outputLabel value="ID:" />
+                    <p:inputText value="#{pessoaController.selected.id}" disabled="true" />
+
+                    <p:outputLabel for="iptNomeEdit" value="Nome:" />
+                    <p:inputText id="iptNomeEdit" value="#{pessoaController.selected.nome}"
+                                 required="true" maxlength="50"
+                                 requiredMessage="O nome é obrigatório" />
+
+                    <p:outputLabel for="iptEmailEdit" value="Email:" />
+                    <p:inputText id="iptEmailEdit" type="email"
+                                 value="#{pessoaController.selected.email}"
+                                 required="true" maxlength="250"
+                                 requiredMessage="O email é obrigatório"
+                                 validatorMessage="Email inválido">
+                        <f:validateRegex pattern="^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$" />
+                    </p:inputText>
+
+                    <p:outputLabel for="iptSenhaEdit" value="Senha:" />
+                    <p:password id="iptSenhaEdit" value="#{pessoaController.selected.senha}"
+                                required="true" feedback="true"
+                                requiredMessage="A senha é obrigatória" />
+                </h:panelGrid>
+                <p:separator />
+                <p:commandButton value="Salvar" icon="pi pi-save"
+                                 action="#{pessoaController.editarPessoa()}"
+                                 update="@form, frmList"
+                                 styleClass="ui-button-primary"
+                                 oncomplete="PF('dlgEdit').hide()" />
+            </h:form>
+        </p:dialog>
+
+        <!-- Diálogo: Detalhes da Pessoa -->
+        <p:dialog header="Detalhes da Pessoa" widgetVar="dlgView" modal="true" width="500" showEffect="fade">
             <h:form id="formView">
-                <h:panelGrid id="pngView" columns="2">
-                    <p:outputLabel value="ID: "/>
-                    <p:outputLabel value="#{pessoaController.selected.id}"/>
+                <h:panelGrid columns="2" styleClass="ui-fluid" columnClasses="label,value">
+                    <p:outputLabel value="ID:" />
+                    <p:outputLabel value="#{pessoaController.selected.id}" />
 
-                    <p:outputLabel value="Nome: "/>
-                    <p:outputLabel value="#{pessoaController.selected.nome}"/>
+                    <p:outputLabel value="Nome:" />
+                    <p:outputLabel value="#{pessoaController.selected.nome}" />
 
-                    <p:outputLabel value="Email: "/>
-                    <p:outputLabel value="#{pessoaController.selected.email}"/>
+                    <p:outputLabel value="Email:" />
+                    <p:outputLabel value="#{pessoaController.selected.email}" />
                 </h:panelGrid>
             </h:form>
         </p:dialog>

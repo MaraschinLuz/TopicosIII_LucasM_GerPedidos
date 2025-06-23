@@ -4,7 +4,7 @@
                 xmlns:ui="http://java.sun.com/jsf/facelets"
                 xmlns:p="http://primefaces.org/ui"
                 template="/WEB-INF/template.xhtml">
-    
+
     <ui:define name="title">
         <h:outputText value="Cliente" />
     </ui:define>
@@ -12,58 +12,56 @@
     <ui:define name="content">
         <h:form id="frmList">
             <h:panelGroup id="pngList">
-                <p:fieldset toggleable="true">
+                <p:fieldset legend="Lista de Clientes" toggleable="true" toggleSpeed="300">
                     <p:dataTable id="datalist" value="#{clienteController.clienteList}" var="item"
                                  selectionMode="single" selection="#{clienteController.selected}"
                                  widgetVar="datalistClienteWidgetVar"
                                  rowKey="#{item.id}"
                                  paginator="true"
-                                 rows="3"
-                                 rowsPerPageTemplate="5,10,50,100"
-                                 emptyMessage="Nenhum cliente cadastrado...">
+                                 rows="5"
+                                 rowsPerPageTemplate="5,10,20,50"
+                                 emptyMessage="Nenhum cliente cadastrado..."
+                                 styleClass="ui-datatable-hoverable-rows">
 
-                        <p:ajax event="rowSelect" update="btnEdit btnDelete btnView" />
-                        <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView" />
+                        <p:ajax event="rowSelect" update="btnToolbar" />
+                        <p:ajax event="rowUnselect" update="btnToolbar" />
 
-                        <p:column width="4%" sortBy="#{item.id}" filterBy="#{item.id}">
-                            <f:facet name="header">ID</f:facet>
+                        <p:column headerText="ID" width="6%" sortBy="#{item.id}" filterBy="#{item.id}">
                             <h:outputText value="#{item.id}" />
                         </p:column>
 
-                        <p:column width="10%" sortBy="#{item.nome}" filterBy="#{item.nome}">
-                            <f:facet name="header">Nome</f:facet>
+                        <p:column headerText="Nome" sortBy="#{item.nome}" filterBy="#{item.nome}">
                             <h:outputText value="#{item.nome}" />
                         </p:column>
 
-                        <p:column width="10%" sortBy="#{item.telefone}" filterBy="#{item.telefone}">
-                            <f:facet name="header">Telefone</f:facet>
+                        <p:column headerText="Telefone" sortBy="#{item.telefone}" filterBy="#{item.telefone}">
                             <h:outputText value="#{item.telefone}" />
                         </p:column>
 
-                        <p:column width="15%" sortBy="#{item.endereco}" filterBy="#{item.endereco}">
-                            <f:facet name="header">Endereço</f:facet>
+                        <p:column headerText="Endereço" sortBy="#{item.endereco}" filterBy="#{item.endereco}">
                             <h:outputText value="#{item.endereco}" />
                         </p:column>
 
                         <f:facet name="footer">
-                            <p:commandButton id="btnCreate" value="Incluir Cliente" icon="pi pi-plus"
-                                             onclick="PF('dlgCreate').show()" />
-
-                            <p:commandButton id="btnEdit" value="Editar" icon="pi pi-pencil"
-                                             update="formEdit" oncomplete="PF('dlgEdit').show()"
-                                             disabled="#{empty clienteController.selected}" />
-
-                            <p:commandButton id="btnDelete" value="Excluir" icon="pi pi-trash"
-                                             actionListener="#{clienteController.deletarCliente()}"
-                                             update="frmList" disabled="#{empty clienteController.selected}">
-                                <p:confirm header="Confirmar Exclusão"
-                                           message="Confirma a exclusão do cliente?"
-                                           icon="pi pi-exclamation-triangle" />
-                            </p:commandButton>
-
-                            <p:commandButton id="btnView" value="Detalhes" icon="pi pi-eye"
-                                             update="formView" oncomplete="PF('dlgView').show()"
-                                             disabled="#{empty clienteController.selected}" />
+                            <p:toolbar id="btnToolbar">
+                                <p:toolbarGroup>
+                                    <p:commandButton id="btnCreate" value="Novo Cliente" icon="pi pi-plus"
+                                                     styleClass="ui-button-success" onclick="PF('dlgCreate').show()" />
+                                    <p:commandButton id="btnEdit" value="Editar" icon="pi pi-pencil"
+                                                     update="formEdit" oncomplete="PF('dlgEdit').show()"
+                                                     disabled="#{empty clienteController.selected}" />
+                                    <p:commandButton id="btnDelete" value="Excluir" icon="pi pi-trash"
+                                                     actionListener="#{clienteController.deletarCliente()}"
+                                                     update="frmList" disabled="#{empty clienteController.selected}">
+                                        <p:confirm header="Confirmar Exclusão"
+                                                   message="Confirma a exclusão do cliente?"
+                                                   icon="pi pi-exclamation-triangle" />
+                                    </p:commandButton>
+                                    <p:commandButton id="btnView" value="Detalhes" icon="pi pi-eye"
+                                                     update="formView" oncomplete="PF('dlgView').show()"
+                                                     disabled="#{empty clienteController.selected}" />
+                                </p:toolbarGroup>
+                            </p:toolbar>
                         </f:facet>
                     </p:dataTable>
                 </p:fieldset>
@@ -76,54 +74,62 @@
         </h:form>
 
         <!-- Diálogo: Novo Cliente -->
-        <p:dialog header="Novo Cliente" widgetVar="dlgCreate" modal="true" width="600" showEffect="fade">
+        <p:dialog header="Novo Cliente" widgetVar="dlgCreate" modal="true" width="550" showEffect="fade">
             <h:form id="CreateForm">
                 <p:growl showDetail="true" />
-                <h:panelGrid columns="2">
-                    <p:outputLabel value="Nome:" for="iptNomeCreate" />
+                <h:panelGrid columns="2" columnClasses="label,value" styleClass="ui-fluid" >
+                    <p:outputLabel for="iptNomeCreate" value="Nome:" />
                     <p:inputText id="iptNomeCreate" value="#{clienteController.cliente.nome}"
-                                 required="true" requiredMessage="O nome é obrigatório" maxlength="50" />
+                                 required="true" maxlength="50"
+                                 requiredMessage="O nome é obrigatório" />
 
-                    <p:outputLabel value="Telefone:" for="iptTelefoneCreate" />
+                    <p:outputLabel for="iptTelefoneCreate" value="Telefone:" />
                     <p:inputMask id="iptTelefoneCreate" mask="(99) 99999-9999"
                                  value="#{clienteController.cliente.telefone}"
                                  required="true" requiredMessage="O telefone é obrigatório" />
 
-                    <p:outputLabel value="Endereço:" for="iptEnderecoCreate" />
+                    <p:outputLabel for="iptEnderecoCreate" value="Endereço:" />
                     <p:inputText id="iptEnderecoCreate" value="#{clienteController.cliente.endereco}"
-                                 required="true" requiredMessage="O endereço é obrigatório" maxlength="100" />
+                                 required="true" maxlength="100"
+                                 requiredMessage="O endereço é obrigatório" />
                 </h:panelGrid>
+                <p:separator />
                 <p:commandButton value="Cadastrar" icon="pi pi-check"
                                  action="#{clienteController.adicionarCliente()}"
                                  update="@form, frmList"
+                                 styleClass="ui-button-primary"
                                  oncomplete="PF('dlgCreate').hide()" />
             </h:form>
         </p:dialog>
 
         <!-- Diálogo: Editar Cliente -->
-        <p:dialog header="Editar Cliente" widgetVar="dlgEdit" modal="true" width="600" showEffect="fade">
+        <p:dialog header="Editar Cliente" widgetVar="dlgEdit" modal="true" width="550" showEffect="fade">
             <h:form id="formEdit">
                 <p:growl showDetail="true" />
-                <h:panelGrid columns="2">
+                <h:panelGrid columns="2" columnClasses="label,value" styleClass="ui-fluid" >
                     <p:outputLabel value="ID:" />
                     <p:inputText value="#{clienteController.selected.id}" disabled="true" />
 
-                    <p:outputLabel value="Nome:" for="iptNomeEdit" />
+                    <p:outputLabel for="iptNomeEdit" value="Nome:" />
                     <p:inputText id="iptNomeEdit" value="#{clienteController.selected.nome}"
-                                 required="true" requiredMessage="O nome é obrigatório" maxlength="50" />
+                                 required="true" maxlength="50"
+                                 requiredMessage="O nome é obrigatório" />
 
-                    <p:outputLabel value="Telefone:" for="iptTelefoneEdit" />
+                    <p:outputLabel for="iptTelefoneEdit" value="Telefone:" />
                     <p:inputMask id="iptTelefoneEdit" mask="(99) 99999-9999"
                                  value="#{clienteController.selected.telefone}"
                                  required="true" requiredMessage="O telefone é obrigatório" />
 
-                    <p:outputLabel value="Endereço:" for="iptEnderecoEdit" />
+                    <p:outputLabel for="iptEnderecoEdit" value="Endereço:" />
                     <p:inputText id="iptEnderecoEdit" value="#{clienteController.selected.endereco}"
-                                 required="true" requiredMessage="O endereço é obrigatório" maxlength="100" />
+                                 required="true" maxlength="100"
+                                 requiredMessage="O endereço é obrigatório" />
                 </h:panelGrid>
+                <p:separator />
                 <p:commandButton value="Salvar" icon="pi pi-save"
                                  action="#{clienteController.editarCliente()}"
                                  update="@form, frmList"
+                                 styleClass="ui-button-primary"
                                  oncomplete="PF('dlgEdit').hide()" />
             </h:form>
         </p:dialog>
@@ -131,7 +137,7 @@
         <!-- Diálogo: Visualizar Cliente -->
         <p:dialog header="Detalhes do Cliente" widgetVar="dlgView" modal="true" width="500" showEffect="fade">
             <h:form id="formView">
-                <h:panelGrid columns="2">
+                <h:panelGrid columns="2" styleClass="ui-fluid" columnClasses="label,value">
                     <p:outputLabel value="ID:" />
                     <p:outputLabel value="#{clienteController.selected.id}" />
 

@@ -11,161 +11,137 @@
 
     <ui:define name="content">
         <h:form id="frmList">
-            <h:panelGroup id="pngList">
-                <p:fieldset toggleable="true">
-                    <p:dataTable id="datalist" value="#{produtoController.produtoList}" var="item"
-                                 selectionMode="single" selection="#{produtoController.selected}"
-                                 widgetVar="datalistProdutoWidgetVar"
-                                 rowKey="#{item.id}"
-                                 paginator="true"
-                                 rows="5"
-                                 rowsPerPageTemplate="5,10,50,100"
-                                 emptyMessage="Nenhum produto cadastrado...">
+            <p:fieldset legend="Produtos Cadastrados" toggleable="true">
+                <p:dataTable id="datalist" value="#{produtoController.produtoList}" var="item"
+                             selectionMode="single" selection="#{produtoController.selected}"
+                             rowKey="#{item.id}" widgetVar="datalistProdutoWidgetVar"
+                             paginator="true" rows="5" rowsPerPageTemplate="5,10,50,100"
+                             emptyMessage="Nenhum produto cadastrado...">
 
-                        <p:ajax event="rowSelect" update="btnEdit btnDelete btnView"/>
-                        <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView"/>
+                    <p:ajax event="rowSelect" update="btnEdit btnDelete btnView"/>
+                    <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView"/>
 
-                        <p:column width="4%" sortBy="#{item.id}" filterBy="#{item.id}">
-                            <f:facet name="header">
-                                <h:outputText value="ID"/>
-                            </f:facet>
-                            <h:outputText value="#{item.id}"/>
-                        </p:column>
+                    <p:column headerText="ID" width="5%" sortBy="#{item.id}" filterBy="#{item.id}">
+                        <h:outputText value="#{item.id}" />
+                    </p:column>
 
-                        <p:column width="20%" sortBy="#{item.nome}" filterBy="#{item.nome}">
-                            <f:facet name="header">
-                                <h:outputText value="Nome"/>
-                            </f:facet>
-                            <h:outputText value="#{item.nome}"/>
-                        </p:column>
+                    <p:column headerText="Nome" sortBy="#{item.nome}" filterBy="#{item.nome}">
+                        <h:outputText value="#{item.nome}" />
+                    </p:column>
 
-                        <p:column width="40%" sortBy="#{item.descricao}" filterBy="#{item.descricao}">
-                            <f:facet name="header">
-                                <h:outputText value="Descrição"/>
-                            </f:facet>
-                            <h:outputText value="#{item.descricao}"/>
-                        </p:column>
+                    <p:column headerText="Descrição" sortBy="#{item.descricao}" filterBy="#{item.descricao}">
+                        <h:outputText value="#{item.descricao}" />
+                    </p:column>
 
-                        <p:column width="15%" sortBy="#{item.preco}" filterBy="#{item.preco}">
-                            <f:facet name="header">
-                                <h:outputText value="Preço"/>
-                            </f:facet>
-                            <h:outputText value="#{item.preco}">
-                                <f:convertNumber type="currency" currencySymbol="R$"/>
-                            </h:outputText>
-                        </p:column>
-
-                        <f:facet name="footer">
-                            <p:commandButton id="btnCreate" value="Incluir Produto" icon="pi pi-file"
-                                             onclick="PF('dlgCreate').show()"/>
-
-                            <p:commandButton id="btnEdit" icon="pi pi-pencil" value="Editar Produto"
-                                             update="formEdit" oncomplete="PF('dlgEdit').show()"
-                                             disabled="#{empty produtoController.selected}"/>
-
-                            <p:commandButton id="btnDelete" icon="pi pi-trash" value="Excluir Produto"
-                                             actionListener="#{produtoController.deletarProduto()}" update="frmList"
-                                             disabled="#{empty produtoController.selected}">
-                                <p:confirm header="Confirmar Exclusão" message="Você confirma a exclusão do registro?"
-                                           icon="ui-icon-alert"/>
-                            </p:commandButton>
-
-                            <p:commandButton id="btnView" icon="pi pi-eye" value="Detalhes do Produto"
-                                             update="formView" oncomplete="PF('dlgView').show()"
-                                             disabled="#{empty produtoController.selected}"/>
-                        </f:facet>
-                    </p:dataTable>
-                </p:fieldset>
-                <p:confirmDialog global="true" showEffect="true" hideEffect="fade">
-                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="fa fa-check"/>
-                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="fa fa-times"/>
-                </p:confirmDialog>
-            </h:panelGroup>
-        </h:form>
-
-        <!-- Diálogo para criar novo produto -->
-        <p:dialog header="Novo Produto" widgetVar="dlgCreate" height="400" width="600" showEffect="fade" modal="true">
-            <h:form id="CreateForm">
-                <p:growl id="growl" showDetail="true"/>
-                <h:panelGrid id="pngCadastro" columns="2">
-
-                    <p:outputLabel id="oplNome" value="Nome:" for="iptNome"/>
-                    <p:inputText id="iptNome" size="40" label="Nome" required="true"
-                                 requiredMessage="O atributo nome é obrigatório"
-                                 value="#{produtoController.produto.nome}" maxlength="100"/>
-
-                    <p:outputLabel id="oplDescricao" value="Descrição:" for="iptDescricao"/>
-                    <p:inputTextarea id="iptDescricao" rows="4" cols="35" label="Descrição"
-                                     value="#{produtoController.produto.descricao}" maxlength="255"/>
-
-                    <p:outputLabel id="oplPreco" value="Preço:" for="iptPreco"/>
-                    <p:inputText id="iptPreco" size="20" label="Preço" required="true"
-                                 requiredMessage="O atributo preço é obrigatório"
-                                 value="#{produtoController.produto.preco}">
-                        <f:convertNumber locale="pt_BR" minFractionDigits="2" maxFractionDigits="2" />
-                    </p:inputText>
-
-                </h:panelGrid>
-
-                <p:commandButton id="btnCadastrar" value="Cadastrar" update="@form, frmList"
-                                 action="#{produtoController.adicionarProduto()}" onclick="PF('dlgCreate').hide()"/>
-            </h:form>
-        </p:dialog>
-
-        <!-- Diálogo para editar produto -->
-        <p:dialog header="Editar Produto" widgetVar="dlgEdit" height="400" width="600" showEffect="fade" modal="true">
-            <h:form id="formEdit">
-                <p:growl id="growl" showDetail="true"/>
-                <h:panelGrid id="pngEdicao" columns="2">
-
-                    <p:outputLabel id="oplId" value="ID:" for="iptId"/>
-                    <p:inputText id="iptId" size="10" label="ID" disabled="true"
-                                 value="#{produtoController.selected.id}"/>
-
-                    <p:outputLabel id="oplNome" value="Nome:" for="iptNome"/>
-                    <p:inputText id="iptNome" size="40" label="Nome" required="true"
-                                 requiredMessage="O atributo nome é obrigatório"
-                                 value="#{produtoController.selected.nome}" maxlength="100"/>
-
-                    <p:outputLabel id="oplDescricao" value="Descrição:" for="iptDescricao"/>
-                    <p:inputTextarea id="iptDescricao" rows="4" cols="35" label="Descrição"
-                                     value="#{produtoController.selected.descricao}" maxlength="255"/>
-
-                    <p:outputLabel id="oplPreco" value="Preço:" for="iptPreco"/>
-                    <p:inputText id="iptPreco" size="20" label="Preço" required="true"
-                                 requiredMessage="O atributo preço é obrigatório"
-                                 value="#{produtoController.selected.preco}">
-                        <f:convertNumber locale="pt_BR" minFractionDigits="2" maxFractionDigits="2" />
-                    </p:inputText>
-
-                </h:panelGrid>
-
-                <p:commandButton id="btnSalvarEdicao" value="Salvar" update="@form, frmList"
-                                 onclick="PF('dlgEdit').hide()" icon="pi pi-save"
-                                 action="#{produtoController.editarProduto()}"/>
-            </h:form>
-        </p:dialog>
-
-        <!-- Diálogo para visualizar detalhes do produto -->
-        <p:dialog header="Visualizar Detalhes do Produto" widgetVar="dlgView" height="250"
-                  width="500" showEffect="fade" modal="true">
-            <h:form id="formView">
-                <h:panelGrid id="pngView" columns="2">
-                    <p:outputLabel value="ID: "/>
-                    <p:outputLabel value="#{produtoController.selected.id}"/>
-
-                    <p:outputLabel value="Nome: "/>
-                    <p:outputLabel value="#{produtoController.selected.nome}"/>
-
-                    <p:outputLabel value="Descrição: "/>
-                    <p:outputLabel value="#{produtoController.selected.descricao}"/>
-
-                    <p:outputLabel value="Preço: "/>
-                    <p:outputLabel>
-                        <h:outputText value="#{produtoController.selected.preco}">
+                    <p:column headerText="Preço" sortBy="#{item.preco}" filterBy="#{item.preco}">
+                        <h:outputText value="#{item.preco}">
                             <f:convertNumber type="currency" currencySymbol="R$"/>
                         </h:outputText>
-                    </p:outputLabel>
+                    </p:column>
+
+                    <f:facet name="footer">
+                        <p:commandButton id="btnCreate" value="Incluir Produto" icon="pi pi-plus"
+                                         onclick="PF('dlgCreate').show()" styleClass="ui-button-success"/>
+
+                        <p:commandButton id="btnEdit" value="Editar Produto" icon="pi pi-pencil"
+                                         update="formEdit" oncomplete="PF('dlgEdit').show()"
+                                         disabled="#{empty produtoController.selected}" styleClass="ui-button-warning"/>
+
+                        <p:commandButton id="btnDelete" value="Excluir Produto" icon="pi pi-trash"
+                                         actionListener="#{produtoController.deletarProduto()}" update="frmList"
+                                         disabled="#{empty produtoController.selected}" styleClass="ui-button-danger">
+                            <p:confirm header="Confirmar Exclusão"
+                                       message="Deseja realmente excluir o produto selecionado?"
+                                       icon="pi pi-exclamation-triangle"/>
+                        </p:commandButton>
+
+                        <p:commandButton id="btnView" value="Visualizar" icon="pi pi-eye"
+                                         update="formView" oncomplete="PF('dlgView').show()"
+                                         disabled="#{empty produtoController.selected}"/>
+                    </f:facet>
+                </p:dataTable>
+            </p:fieldset>
+
+            <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+            </p:confirmDialog>
+        </h:form>
+
+        <!-- Diálogo de Cadastro -->
+        <p:dialog header="Cadastrar Produto" widgetVar="dlgCreate" modal="true" resizable="false" width="500">
+            <h:form id="CreateForm">
+                <h:panelGrid columns="2" columnClasses="label,value" styleClass="ui-panelgrid-blank">
+
+                    <p:outputLabel for="iptNome" value="Nome:" />
+                    <p:inputText id="iptNome" value="#{produtoController.produto.nome}" required="true"
+                                 requiredMessage="Informe o nome do produto" maxlength="100"/>
+
+                    <p:outputLabel for="iptDescricao" value="Descrição:" />
+                    <p:inputTextarea id="iptDescricao" value="#{produtoController.produto.descricao}"
+                                     maxlength="255" rows="3"/>
+
+                    <p:outputLabel for="iptPreco" value="Preço:" />
+                    <p:inputText id="iptPreco" value="#{produtoController.produto.preco}" required="true"
+                                 requiredMessage="Informe o preço do produto">
+                        <f:convertNumber locale="pt_BR" minFractionDigits="2" maxFractionDigits="2"/>
+                    </p:inputText>
+
+                </h:panelGrid>
+
+                <p:separator/>
+                <p:commandButton value="Salvar" icon="pi pi-check" action="#{produtoController.adicionarProduto()}"
+                                 update="@form, frmList" onclick="PF('dlgCreate').hide()" styleClass="ui-button-success"/>
+            </h:form>
+        </p:dialog>
+
+        <!-- Diálogo de Edição -->
+        <p:dialog header="Editar Produto" widgetVar="dlgEdit" modal="true" resizable="false" width="500">
+            <h:form id="formEdit">
+                <h:panelGrid columns="2" columnClasses="label,value" styleClass="ui-panelgrid-blank">
+
+                    <p:outputLabel for="iptId" value="ID:" />
+                    <p:inputText id="iptId" value="#{produtoController.selected.id}" disabled="true"/>
+
+                    <p:outputLabel for="iptNome" value="Nome:" />
+                    <p:inputText id="iptNome" value="#{produtoController.selected.nome}" required="true"
+                                 requiredMessage="Informe o nome" maxlength="100"/>
+
+                    <p:outputLabel for="iptDescricao" value="Descrição:" />
+                    <p:inputTextarea id="iptDescricao" value="#{produtoController.selected.descricao}"
+                                     maxlength="255" rows="3"/>
+
+                    <p:outputLabel for="iptPreco" value="Preço:" />
+                    <p:inputText id="iptPreco" value="#{produtoController.selected.preco}" required="true"
+                                 requiredMessage="Informe o preço">
+                        <f:convertNumber locale="pt_BR" minFractionDigits="2" maxFractionDigits="2"/>
+                    </p:inputText>
+
+                </h:panelGrid>
+
+                <p:separator/>
+                <p:commandButton value="Salvar" icon="pi pi-save" action="#{produtoController.editarProduto()}"
+                                 update="@form, frmList" onclick="PF('dlgEdit').hide()" styleClass="ui-button-primary"/>
+            </h:form>
+        </p:dialog>
+
+        <!-- Diálogo de Visualização -->
+        <p:dialog header="Detalhes do Produto" widgetVar="dlgView" modal="true" resizable="false" width="400">
+            <h:form id="formView">
+                <h:panelGrid columns="2" columnClasses="label,value" styleClass="ui-panelgrid-blank">
+                    <p:outputLabel value="ID:" />
+                    <p:outputLabel value="#{produtoController.selected.id}" />
+
+                    <p:outputLabel value="Nome:" />
+                    <p:outputLabel value="#{produtoController.selected.nome}" />
+
+                    <p:outputLabel value="Descrição:" />
+                    <p:outputLabel value="#{produtoController.selected.descricao}" />
+
+                    <p:outputLabel value="Preço:" />
+                    <h:outputText value="#{produtoController.selected.preco}">
+                        <f:convertNumber type="currency" currencySymbol="R$"/>
+                    </h:outputText>
                 </h:panelGrid>
             </h:form>
         </p:dialog>
