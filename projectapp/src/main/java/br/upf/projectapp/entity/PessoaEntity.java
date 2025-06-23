@@ -1,11 +1,5 @@
-
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package br.upf.projectapp.entity;
 
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -16,44 +10,45 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.io.Serializable;
-
-/**
- *
- * @author 193897
- */
+import jakarta.validation.constraints.Email;
 
 @Entity
 @Table(name = "pessoa")
-public class PessoaEntity implements Serializable{
-    
+public class PessoaEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    private int id;
-    
+    private Integer id;
+
     @Basic(optional = false)
-    @Nonnull
-    @Size(min = 1, max = 500)
+    @NotNull(message = "Nome é obrigatório")
+    @Size(min = 1, max = 500, message = "Nome deve ter entre 1 e 500 caracteres")
     @Column(name = "nome")
     private String nome;
-    
+
     @Basic(optional = false)
-    @Nonnull
-    @Size(min = 1, max = 250)
+    @NotNull(message = "Email é obrigatório")
+    @Size(min = 1, max = 250, message = "Email deve ter entre 1 e 250 caracteres")
+    @Email(message = "Email inválido")
     @Column(name = "email")
     private String email;
-    
+
     @Basic(optional = false)
-    @NotNull
+    @NotNull(message = "Senha é obrigatória")
     @Column(name = "senha")
     private String senha;
 
-    public int getId() {
+    // Getters e Setters
+
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -81,28 +76,22 @@ public class PessoaEntity implements Serializable{
         this.senha = senha;
     }
 
+    // hashCode e equals baseados no id
+
     @Override
     public int hashCode() {
-        int hash = 3;
-        hash = 97 * hash + this.id;
+        int hash = 7;
+        hash = 53 * hash + (id != null ? id.hashCode() : 0);
         return hash;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final PessoaEntity other = (PessoaEntity) obj;
-        return this.id == other.id;
+        if (this == obj) return true;
+        if (obj == null) return false;
+        if (!(obj instanceof PessoaEntity)) return false;
+        PessoaEntity other = (PessoaEntity) obj;
+        if (id == null || other.id == null) return false;
+        return id.equals(other.id);
     }
-
-
-    
 }

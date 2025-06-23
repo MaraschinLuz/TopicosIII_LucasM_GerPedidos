@@ -8,13 +8,9 @@ import jakarta.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 
-//respondem apenas a uma chamada e logo depois podem ser 
-@Stateless //utilizados para outras chamadas de qualquer cliente.            
+@Stateless
 public class PessoaFacade extends AbstractFacade<PessoaEntity> {
 
-    /**
-     * Definindo a unidade de persistencia
-     */
     @PersistenceContext(unitName = "ProjetojfprimefacesPU")
     private EntityManager em;
 
@@ -23,9 +19,6 @@ public class PessoaFacade extends AbstractFacade<PessoaEntity> {
         return em;
     }
 
-    /**
-     * Construtor que passa para superclasse a instância de PessoaEntity
-     */
     public PessoaFacade() {
         super(PessoaEntity.class);
     }
@@ -35,40 +28,65 @@ public class PessoaFacade extends AbstractFacade<PessoaEntity> {
     public List<PessoaEntity> buscarTodos() {
         entityList = new ArrayList<>();
         try {
-            //utilizando JPQL para construir a query 
-            Query query = getEntityManager().createQuery("SELECT p FROM PessoaEntity p order by p.nome");
-            //verifica se existe algum resultado para não gerar excessão
-            if (!query.getResultList().isEmpty()) {
-                entityList = (List<PessoaEntity>) query.getResultList();
-            }
+            Query query = getEntityManager().createQuery("SELECT p FROM PessoaEntity p ORDER BY p.nome");
+            entityList = query.getResultList();
         } catch (Exception e) {
-            System.out.println("Erro: " + e);
+            System.out.println("Erro ao buscar todos: " + e);
         }
         return entityList;
     }
 
-    /**
-     * Buscar uma pessoa por email
-     * @param email
-     * @param senha
-     * @return 
-     */
     public PessoaEntity buscarPorEmail(String email, String senha) {
-        PessoaEntity pessoa = new PessoaEntity();
+        PessoaEntity pessoa = null;
         try {
-            //utilizando JPQL para construir a query 
             Query query = getEntityManager()
                     .createQuery("SELECT p FROM PessoaEntity p WHERE p.email = :email AND p.senha = :senha");
             query.setParameter("email", email);
             query.setParameter("senha", senha);
 
-            //verifica se existe algum resultado para não gerar excessão
-            if (!query.getResultList().isEmpty()) {
-                pessoa = (PessoaEntity) query.getSingleResult();
-            }
+            pessoa = (PessoaEntity) query.getSingleResult();
         } catch (Exception e) {
-            System.out.println("Erro: " + e);
+            System.out.println("Erro ao buscar por email e senha: " + e);
         }
         return pessoa;
+    }
+
+    // Método para salvar PessoaEntity
+    public void salvar(PessoaEntity pessoa) {
+        try {
+            getEntityManager().persist(pessoa);
+        } catch (Exception e) {
+            System.out.println("Erro ao salvar pessoa: " + e);
+            throw e;
+        }
+    }
+
+    // Método para atualizar PessoaEntity
+    public void atualizar(PessoaEntity pessoa) {
+        try {
+            getEntityManager().merge(pessoa);
+        } catch (Exception e) {
+            System.out.println("Erro ao atualizar pessoa: " + e);
+            throw e;
+        }
+    }
+
+    // Método para excluir PessoaEntity
+    public void excluir(PessoaEntity pessoa) {
+        if (pessoa != null && pessoa.getId() != 0) {
+            PessoaEntity managedPessoa = getEntityManager().find(PessoaEntity.class, pessoa.getId());
+            if (managedPessoa != null) {
+                try {
+                    getEntityManager().remove(managedPessoa);
+                } catch (Exception e) {
+                    System.out.println("Erro ao excluir pessoa: " + e);
+                    throw e;
+                }
+            } else {
+                System.out.println("Pessoa para exclusão não encontrada no banco.");
+            }
+        } else {
+            System.out.println("Pessoa ou ID nulo para exclusão.");
+        }
     }
 }

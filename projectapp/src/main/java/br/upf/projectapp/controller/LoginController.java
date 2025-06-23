@@ -41,17 +41,19 @@ public class LoginController implements Serializable {
      * @return
      */
     public String validarLogin() {
-        
+        //criando o contexto
         FacesContext context = FacesContext.getCurrentInstance();
-        
+        //captura a sessão do contexto criado pelo JavaServerFaces
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
-        
+
         PessoaEntity pessoaDB = ejbFacade.buscarPorEmail(pessoa.getEmail(), pessoa.getSenha());
         if ((pessoaDB != null)) {
-            
+            //adicionando na sessão o atributo logado.
+            //[pessoaLogada] é o nome do atributo na sessão e [pessoa]
+            //é o objeto pessoa sendo enviada como valor
             session.setAttribute("pessoaLogada", pessoaDB);
             //caso as credenciais foram válidas, então direciona para página index
-            return "/admin/pessoa.xhtml?faces-redirect=true";
+            return "/pessoa.xhtml?faces-redirect=true";
         } else {
             //senão, exibe uma mensagem de falha...
             FacesMessage fm = new FacesMessage(

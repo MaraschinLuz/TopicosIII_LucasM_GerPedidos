@@ -1,0 +1,154 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml">
+
+    <ui:define name="title">
+        <h:outputText value="Cadastro de Pedido" />
+    </ui:define>
+
+    <ui:define name="content">
+        <h:form id="frmList">
+            <h:panelGroup id="pngList">
+                <p:fieldset toggleable="true">
+                    <p:dataTable id="datalist" value="#{pedidoController.lista}" var="item"
+                                 selectionMode="single" selection="#{pedidoController.selected}"
+                                 widgetVar="datalistPedidoWidgetVar"
+                                 rowKey="#{item.id}"
+                                 paginator="true"
+                                 rows="5"
+                                 rowsPerPageTemplate="5,10,50,100"
+                                 emptyMessage="Nenhum pedido cadastrado...">
+
+                        <p:ajax event="rowSelect" update="btnEdit btnDelete btnView"/>
+                        <p:ajax event="rowUnselect" update="btnEdit btnDelete btnView"/>
+
+                        <p:column width="5%" sortBy="#{item.id}" filterBy="#{item.id}">
+                            <f:facet name="header">ID</f:facet>
+                            <h:outputText value="#{item.id}"/>
+                        </p:column>
+
+                        <p:column width="20%" sortBy="#{item.dataPedido}" filterBy="#{item.dataPedido}">
+                            <f:facet name="header">Data</f:facet>
+                            <h:outputText value="#{item.dataPedido}">
+                                <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                            </h:outputText>
+                        </p:column>
+
+                        <p:column width="25%" sortBy="#{item.cliente.nome}" filterBy="#{item.cliente.nome}">
+                            <f:facet name="header">Cliente</f:facet>
+                            <h:outputText value="#{item.cliente.nome}" />
+                        </p:column>
+
+                        <p:column width="50%" sortBy="#{item.produtos}" filterBy="#{item.produtos}">
+                            <f:facet name="header">Produtos</f:facet>
+                            <h:outputText value="#{item.produtos}" />
+                        </p:column>
+
+                        <f:facet name="footer">
+                            <p:commandButton id="btnCreate" value="Incluir Pedido" icon="pi pi-file"
+                                             onclick="PF('dlgCreate').show()" />
+
+                            <p:commandButton id="btnEdit" value="Editar Pedido" icon="pi pi-pencil"
+                                             update="formEdit" oncomplete="PF('dlgEdit').show()"
+                                             disabled="#{empty pedidoController.selected}" />
+
+                            <p:commandButton id="btnDelete" value="Excluir Pedido" icon="pi pi-trash"
+                                             actionListener="#{pedidoController.deletar}" update="frmList"
+                                             disabled="#{empty pedidoController.selected}">
+                                <p:confirm header="Confirmar Exclusão" message="Deseja excluir este pedido?"
+                                           icon="pi pi-exclamation-triangle"/>
+                            </p:commandButton>
+
+                            <p:commandButton id="btnView" value="Detalhes do Pedido" icon="pi pi-eye"
+                                             update="formView" oncomplete="PF('dlgView').show()"
+                                             disabled="#{empty pedidoController.selected}" />
+                        </f:facet>
+                    </p:dataTable>
+                </p:fieldset>
+
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Sim" type="button" styleClass="ui-confirmdialog-yes" icon="pi pi-check"/>
+                    <p:commandButton value="Não" type="button" styleClass="ui-confirmdialog-no" icon="pi pi-times"/>
+                </p:confirmDialog>
+            </h:panelGroup>
+        </h:form>
+
+        <!-- Diálogo para criar novo pedido -->
+        <p:dialog header="Novo Pedido" widgetVar="dlgCreate" modal="true" width="600" showEffect="fade">
+            <h:form id="formCreate">
+                <p:growl id="growlCreate" showDetail="true"/>
+                <h:panelGrid columns="2" cellpadding="5">
+
+                    <p:outputLabel value="Cliente:" for="cliente" />
+                    <p:selectOneMenu id="cliente" value="#{pedidoController.pedido.cliente}" required="true">
+                        <f:selectItem itemLabel="Selecione..." noSelectionOption="true" />
+                        <f:selectItems value="#{pedidoController.clientes}" var="c"
+                                       itemLabel="#{c.nome}" itemValue="#{c}" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Produtos:" for="produtos" />
+                    <p:inputTextarea id="produtos" value="#{pedidoController.pedido.produtos}" required="true"
+                                     rows="3" cols="40" maxlength="255"/>
+
+                </h:panelGrid>
+
+                <p:commandButton value="Cadastrar" icon="pi pi-check"
+                                 action="#{pedidoController.salvar}"
+                                 update="@form, frmList"
+                                 onclick="PF('dlgCreate').hide()" />
+            </h:form>
+        </p:dialog>
+
+        <!-- Diálogo para editar pedido -->
+        <p:dialog header="Editar Pedido" widgetVar="dlgEdit" modal="true" width="600" showEffect="fade">
+            <h:form id="formEdit">
+                <p:growl id="growlEdit" showDetail="true"/>
+                <h:panelGrid columns="2" cellpadding="5">
+
+                    <p:outputLabel value="ID:" />
+                    <p:inputText value="#{pedidoController.selected.id}" disabled="true" />
+
+                    <p:outputLabel value="Cliente:" />
+                    <p:selectOneMenu value="#{pedidoController.selected.cliente}" required="true">
+                        <f:selectItem itemLabel="Selecione..." noSelectionOption="true" />
+                        <f:selectItems value="#{pedidoController.clientes}" var="c"
+                                       itemLabel="#{c.nome}" itemValue="#{c}" />
+                    </p:selectOneMenu>
+
+                    <p:outputLabel value="Produtos:" />
+                    <p:inputTextarea value="#{pedidoController.selected.produtos}" rows="3" cols="40" maxlength="255"/>
+
+                </h:panelGrid>
+
+                <p:commandButton value="Salvar" icon="pi pi-save"
+                                 action="#{pedidoController.editar}"
+                                 update="@form, frmList"
+                                 onclick="PF('dlgEdit').hide()" />
+            </h:form>
+        </p:dialog>
+
+        <!-- Diálogo para visualizar pedido -->
+        <p:dialog header="Visualizar Pedido" widgetVar="dlgView" modal="true" width="500" showEffect="fade">
+            <h:form id="formView">
+                <h:panelGrid columns="2" cellpadding="5">
+                    <p:outputLabel value="ID:" />
+                    <p:outputLabel value="#{pedidoController.selected.id}" />
+
+                    <p:outputLabel value="Data:" />
+                    <h:outputText value="#{pedidoController.selected.dataPedido}">
+                        <f:convertDateTime pattern="dd/MM/yyyy HH:mm" />
+                    </h:outputText>
+
+                    <p:outputLabel value="Cliente:" />
+                    <p:outputLabel value="#{pedidoController.selected.cliente.nome}" />
+
+                    <p:outputLabel value="Produtos:" />
+                    <p:outputLabel value="#{pedidoController.selected.produtos}" />
+                </h:panelGrid>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>
